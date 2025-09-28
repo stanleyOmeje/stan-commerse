@@ -1,0 +1,22 @@
+server:
+  port: 9005
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: springboot-course
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/test
+    username: root
+    password: Wall3t53v1ce
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
