@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,9 +26,12 @@ public class Product {
     private String description;
 
     @Column(name = "price")
-    private BigDecimal price;
+    private BigDecimal price = BigDecimal.ZERO;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @OneToMany(mappedBy = "product")
+    private Set<CartItems> cartItems;
 }

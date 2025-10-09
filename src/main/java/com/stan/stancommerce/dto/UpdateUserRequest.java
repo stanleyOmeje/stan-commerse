@@ -1,11 +1,9 @@
 package com.stan.stancommerce.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
-public class UserDto {
-    private Long id;
+public class UpdateUserRequest {
     private String name;
     private String email;
 }

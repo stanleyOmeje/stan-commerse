@@ -1,5 +1,8 @@
 package com.stan.stancommerce.service;
 
+import com.stan.stancommerce.dto.ChangePasswordRequest;
+import com.stan.stancommerce.dto.RegisterUserRequest;
+import com.stan.stancommerce.dto.UpdateUserRequest;
 import com.stan.stancommerce.dto.UserDto;
 import com.stan.stancommerce.entities.User;
 
@@ -9,4 +12,10 @@ public interface UserService {
     List<UserDto> findAll(String name);
 
     UserDto findById(long id);
+
+    UserDto updateUser(UpdateUserRequest request, long id);
+
+    UserDto changePassword(ChangePasswordRequest request, long id);
+
+    UserDto registerUser(RegisterUserRequest request);
 }

@@ -1,11 +1,12 @@
 package com.stan.stancommerce.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
-public class UserDto {
+public class CartProductDto {
     private Long id;
     private String name;
-    private String email;
+    private BigDecimal price = BigDecimal.ZERO;
 }
