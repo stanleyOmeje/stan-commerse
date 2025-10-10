@@ -7,6 +7,11 @@ import com.stan.stancommerce.entities.Cart;
 import com.stan.stancommerce.entities.CartItems;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 @Component
 public class CartMapper {
     public CartDto mapCartToCartDto(Cart cart) {
@@ -28,5 +33,33 @@ public class CartMapper {
         cartItemDto.setProduct(cartProductDto);
 
         return cartItemDto;
+    }
+
+    public CartDto mapCartItemtoCartDto(Set<CartItems> cartItems, Cart cart) {
+        CartDto cartDto = new CartDto();
+        List<CartItemDto> cartItemDtos = new ArrayList<>();
+        if (cartItems != null && !cartItems.isEmpty()) {
+            cartItems.stream().map(cartItem -> {
+                CartItemDto cartItemDto = new CartItemDto();
+
+                cartItemDto.setQuantity(cartItem.getQuantity());
+                cartItemDto.setTotalPrice(cartItem.getTotalPrice());
+
+                CartProductDto cartProductDto = new CartProductDto();
+
+                cartProductDto.setId(cartItem.getId());
+                cartProductDto.setName(cartItem.getProduct().getName());
+                cartProductDto.setPrice(cartItem.getProduct().getPrice());
+
+                cartItemDto.setProduct(cartProductDto);
+                cartItemDto.setProduct(cartProductDto);
+                cartItemDtos.add(cartItemDto);
+                return cartItemDto;
+            }).toList();
+        }
+        cartDto.setItems(cartItemDtos);
+        cartDto.setId(cartItems.size());
+        cartDto.setTotalPrice(cart.getTotalPrice());
+        return cartDto;
     }
 }

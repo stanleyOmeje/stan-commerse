@@ -3,8 +3,9 @@ package com.stan.stancommerce.controller;
 import com.stan.stancommerce.dto.AddItemtoCartRequest;
 import com.stan.stancommerce.dto.CartDto;
 import com.stan.stancommerce.dto.CartItemDto;
-import com.stan.stancommerce.entities.Cart;
+import com.stan.stancommerce.dto.UpdateCartRequest;
 import com.stan.stancommerce.service.CartService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -44,5 +45,32 @@ public class CartController {
             log.error(e.getMessage());
         }
        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+
+    @GetMapping("/{cartId}")
+    public ResponseEntity<CartDto> getCart(@PathVariable Long cartId) {
+        CartDto cartDto = null;
+        try {
+            cartDto = cartService.getCart(cartId);
+            return ResponseEntity.status(HttpStatus.OK).body(cartDto);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+
+    @PutMapping("/{cartId}/items/{productId}")
+    public ResponseEntity<CartItemDto> updateCartItems(@PathVariable("cartId") Long cartId,
+                                                       @PathVariable("productId") Long productId,
+                                                       @Valid @RequestBody UpdateCartRequest updateCartRequest) {
+        CartItemDto cartItemDto = null;
+        try {
+            cartItemDto = cartService.updateCartItems(cartId,productId, updateCartRequest);
+            return ResponseEntity.status(HttpStatus.OK).body(cartItemDto);
+        }catch (Exception e){
+            log.error(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 }

@@ -3,6 +3,7 @@ package com.stan.stancommerce.service.impl;
 import com.stan.stancommerce.dto.AddItemtoCartRequest;
 import com.stan.stancommerce.dto.CartDto;
 import com.stan.stancommerce.dto.CartItemDto;
+import com.stan.stancommerce.dto.UpdateCartRequest;
 import com.stan.stancommerce.entities.Cart;
 import com.stan.stancommerce.entities.CartItems;
 import com.stan.stancommerce.entities.Product;
@@ -15,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,18 +53,53 @@ public class CartServiceImpl implements CartService {
         Cart cart = optionalCart.get();
 
         //check if product exist in CartItems
-        CartItems cartItems = cart.getCartItems().stream().filter(item -> item.getProduct().getId().equals(product.get().getId())).findFirst().orElse(null);
-        if (cartItems != null) {
-            cartItems.setQuantity(cartItems.getQuantity() + 1);
-        }else {
-            cartItems = new CartItems();
-            cartItems.setQuantity(1);
-            cartItems.setProduct(product.get());
-            cartItems.setCart(cart);
-            cart.getCartItems().add(cartItems);
-        }
-       cart = cartRepository.save(cart);
+//        CartItems cartItems = cart.getCartItem(request.getProductId());
+//        if (cartItems != null) {
+//            cartItems.setQuantity(cartItems.getQuantity() + 1);
+//        }else {
+//            cartItems = new CartItems();
+//            cartItems.setQuantity(1);
+//            cartItems.setProduct(product.get());
+//            cartItems.setCart(cart);
+//            cart.getCartItems().add(cartItems);
+//        }
+        CartItems cartItems = cart.addCartItem(product.get());
+        cart = cartRepository.save(cart);
 
         return cartMapper.mapCartToCartItemDto(cartItems);
     }
+
+    @Override
+    public CartDto getCart(Long cartId) {
+        Cart cart = null;
+            try {
+                cart = cartRepository.findById(cartId).orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+            }catch (Exception e) {
+                log.error(e.getMessage());
+            }
+            Set<CartItems> cartItems = cart.getCartItems();
+            if(cartItems != null && !cartItems.isEmpty()) {
+                return cartMapper.mapCartItemtoCartDto(cart.getCartItems(),cart);
+            }
+            return null;
+    }
+
+    @Override
+    public CartItemDto updateCartItems(Long cartId, Long productId, UpdateCartRequest updateCartRequest) {
+        CartItemDto cartItemDto = null;
+        Cart cart = null;
+        try {
+            cart = cartRepository.findById(cartId).orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+            CartItems cartItems = cart.getCartItem(productId);
+            if (cartItems != null) {
+                cartItems.setQuantity(updateCartRequest.getQuantity());
+                cart = cartRepository.save(cart);
+                return cartMapper.mapCartToCartItemDto(cartItems);
+            }
+        }catch (Exception e) {
+            log.error(e.getMessage());
+        }
+        return null;
+    }
+
 }

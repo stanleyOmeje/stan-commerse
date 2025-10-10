@@ -3,6 +3,7 @@ package com.stan.stancommerce.service;
 import com.stan.stancommerce.dto.AddItemtoCartRequest;
 import com.stan.stancommerce.dto.CartDto;
 import com.stan.stancommerce.dto.CartItemDto;
+import com.stan.stancommerce.dto.UpdateCartRequest;
 import org.springframework.http.ResponseEntity;
 
 public interface CartService {
@@ -10,4 +11,7 @@ public interface CartService {
     CartItemDto addToCart(Long productId, AddItemtoCartRequest request);
 
 
+    CartDto getCart(Long cartId);
+
+    CartItemDto updateCartItems(Long cartId, Long productId, UpdateCartRequest updateCartRequest);
 }
