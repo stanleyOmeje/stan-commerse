@@ -4,6 +4,7 @@ import com.stan.stancommerce.dto.response.DefaultResponse;
 import com.stan.stancommerce.service.security.authservice.JwtService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,12 +12,14 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
+@Slf4j
 @Service
 public class JwtServiceImpl implements JwtService {
     @Value("${spring.jwt.key}")
     String key;
     long expirationTime =86400000;
     public String generateToken(String email) {
+        log.info("Generating JWT token for email: ...{} and key ...{}", email, this.key);
         String jwts = Jwts.builder()
             .setSubject(email)
             .setIssuedAt(new Date())
