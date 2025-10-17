@@ -1,10 +1,10 @@
 package com.stan.stancommerce.service.impl;
 
-import com.stan.stancommerce.dto.ChangePasswordRequest;
-import com.stan.stancommerce.dto.RegisterUserRequest;
-import com.stan.stancommerce.dto.UpdateUserRequest;
-import com.stan.stancommerce.dto.UserDto;
+import com.stan.stancommerce.dto.*;
+import com.stan.stancommerce.dto.response.DefaultResponse;
 import com.stan.stancommerce.entities.User;
+import com.stan.stancommerce.enums.ResponseStatus;
+import com.stan.stancommerce.exception.NotFoundException;
 import com.stan.stancommerce.mapper.UserMapper;
 import com.stan.stancommerce.repositories.UserRepository;
 import com.stan.stancommerce.service.UserService;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public List<UserDto> findAll(String name) {
@@ -83,6 +85,7 @@ public class UserServiceImpl implements UserService {
         }
         User user = userMapper.mapRegisterUserRequestToUser(request);
         try{
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
              user = userRepository.save(user);
              userDto = userMapper.UsertoUserDto(user);
              userDto.setId(user.getId());
@@ -92,5 +95,22 @@ public class UserServiceImpl implements UserService {
             log.error(e.getMessage());
         }
         return userDto;
+    }
+
+    @Override
+    public DefaultResponse<?> loginUser(LoginRequest loginRequest) {
+        DefaultResponse<?> response = new DefaultResponse<>();
+        response.setStatus(ResponseStatus.FAILED.getCode());
+        response.setMessage("registered unsuccessful");
+        Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
+        if(user.isEmpty()){
+            throw new NotFoundException("User not found");
+        }
+        boolean matches = passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword());
+        if(matches){
+            response.setStatus(ResponseStatus.SUCCESS.getCode());
+            response.setMessage("User registered successfully");
+        }
+        return response;
     }
 }

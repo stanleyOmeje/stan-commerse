@@ -5,12 +5,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+@Slf4j
 @Entity
 @Getter
 @Setter
@@ -22,7 +24,7 @@ public class Cart {
 
     private Date dateCreated;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.MERGE, orphanRemoval = true)
     private Set<CartItems> cartItems = new HashSet<>();
 
     public BigDecimal getTotalPrice() {
@@ -32,8 +34,10 @@ public class Cart {
     }
 
     public CartItems getCartItem(Long productId) {
-        return cartItems.stream().filter(item -> item.getProduct().getId().equals(productId))
+        CartItems cartItem = null;
+        cartItem = cartItems.stream().filter(item -> item.getProduct().getId().equals(productId))
             .findFirst().orElse(null);
+        return cartItem;
     }
 
     public CartItems addCartItem(Product product) {
@@ -44,10 +48,22 @@ public class Cart {
             cartItem = new CartItems();
             cartItem.setQuantity(1);
             cartItem.setCart(this);
-            cartItem.setProduct(cartItem.getProduct());
+            cartItem.setProduct(product);
             cartItems.add(cartItem);
         }
         return cartItem;
+    }
+
+    public void removeCartItem(Long productId) {
+        CartItems cartItem = getCartItem(productId);
+        if (cartItem != null) {
+            cartItems.remove(cartItem);
+            cartItem.setCart(null);
+        }
+    }
+
+    public void clearCart() {
+        cartItems.clear();
     }
 }
 

@@ -1,9 +1,7 @@
 package com.stan.stancommerce.controller;
 
-import com.stan.stancommerce.dto.ChangePasswordRequest;
-import com.stan.stancommerce.dto.RegisterUserRequest;
-import com.stan.stancommerce.dto.UpdateUserRequest;
-import com.stan.stancommerce.dto.UserDto;
+import com.stan.stancommerce.dto.*;
+import com.stan.stancommerce.dto.response.DefaultResponse;
 import com.stan.stancommerce.mapper.UserMapper;
 import com.stan.stancommerce.service.UserService;
 import jakarta.validation.Valid;
@@ -82,6 +80,13 @@ public class UserController {
            log.info(e.getMessage());
        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null) ;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<DefaultResponse> loginUser(@RequestBody LoginRequest loginRequest){
+       DefaultResponse<?> response = new DefaultResponse<>();
+       response = userService.loginUser(loginRequest);
+       return ResponseEntity.ok().body(response);
     }
 
 }

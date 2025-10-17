@@ -1,9 +1,7 @@
 package com.stan.stancommerce.service;
 
-import com.stan.stancommerce.dto.ChangePasswordRequest;
-import com.stan.stancommerce.dto.RegisterUserRequest;
-import com.stan.stancommerce.dto.UpdateUserRequest;
-import com.stan.stancommerce.dto.UserDto;
+import com.stan.stancommerce.dto.*;
+import com.stan.stancommerce.dto.response.DefaultResponse;
 import com.stan.stancommerce.entities.User;
 
 import java.util.List;
@@ -18,4 +16,6 @@ public interface UserService {
     UserDto changePassword(ChangePasswordRequest request, long id);
 
     UserDto registerUser(RegisterUserRequest request);
+
+    DefaultResponse<?> loginUser(LoginRequest loginRequest);
 }
