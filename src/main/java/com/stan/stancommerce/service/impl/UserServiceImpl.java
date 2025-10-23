@@ -4,6 +4,7 @@ import com.stan.stancommerce.dto.*;
 import com.stan.stancommerce.dto.response.DefaultResponse;
 import com.stan.stancommerce.entities.User;
 import com.stan.stancommerce.enums.ResponseStatus;
+import com.stan.stancommerce.enums.Roles;
 import com.stan.stancommerce.exception.NotFoundException;
 import com.stan.stancommerce.mapper.UserMapper;
 import com.stan.stancommerce.repositories.UserRepository;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +86,7 @@ public class UserServiceImpl implements UserService {
           throw new IllegalArgumentException("User already in use");
         }
         User user = userMapper.mapRegisterUserRequestToUser(request);
+        user.setRole(Roles.USER);
         try{
             user.setPassword(passwordEncoder.encode(user.getPassword()));
              user = userRepository.save(user);
@@ -111,6 +114,23 @@ public class UserServiceImpl implements UserService {
             response.setStatus(ResponseStatus.SUCCESS.getCode());
             response.setMessage("User registered successfully");
         }
+        return response;
+    }
+
+    @Override
+    public DefaultResponse<?>  getLoginUser(String token) {
+        DefaultResponse<UserDto> response = new DefaultResponse<>();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String)authentication.getPrincipal();
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if(optionalUser.isEmpty()){
+            throw new NotFoundException("User not found");
+        }
+        User user = optionalUser.get();
+        UserDto userDto = userMapper.UsertoUserDto(user);
+        response.setStatus(ResponseStatus.SUCCESS.getCode());
+        response.setMessage("User found successfully");
+        response.setData(userDto);
         return response;
     }
 }

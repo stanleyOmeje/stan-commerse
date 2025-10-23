@@ -18,4 +18,6 @@ public interface UserService {
     UserDto registerUser(RegisterUserRequest request);
 
     DefaultResponse<?> loginUser(LoginRequest loginRequest);
+
+    DefaultResponse<?> getLoginUser(String token);
 }

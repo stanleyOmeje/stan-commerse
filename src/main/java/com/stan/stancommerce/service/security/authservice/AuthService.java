@@ -5,4 +5,5 @@ import com.stan.stancommerce.dto.response.DefaultResponse;
 
 public interface AuthService {
     DefaultResponse<?> loginUser(LoginRequest loginRequest);
+
 }

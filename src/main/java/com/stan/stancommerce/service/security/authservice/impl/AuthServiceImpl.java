@@ -1,8 +1,11 @@
 package com.stan.stancommerce.service.security.authservice.impl;
 
 import com.stan.stancommerce.dto.LoginRequest;
+import com.stan.stancommerce.dto.jwt.JwtResponse;
 import com.stan.stancommerce.dto.response.DefaultResponse;
+import com.stan.stancommerce.entities.User;
 import com.stan.stancommerce.enums.ResponseStatus;
+import com.stan.stancommerce.repositories.UserRepository;
 import com.stan.stancommerce.service.security.authservice.AuthService;
 import com.stan.stancommerce.service.security.authservice.JwtService;
 import io.micrometer.common.util.StringUtils;
@@ -18,18 +21,28 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
     @Override
-    public DefaultResponse<String> loginUser(LoginRequest loginRequest) {
-        DefaultResponse<String> response = new DefaultResponse<>();
+    public DefaultResponse<?> loginUser(LoginRequest loginRequest) {
+        JwtResponse jwtResponse = new JwtResponse();
+        DefaultResponse<JwtResponse> response = new DefaultResponse<>();
         response.setStatus(ResponseStatus.FAILED.getCode());
         response.setMessage(ResponseStatus.FAILED.getMessage());
         try{
+            String token = null;
+            String refrshToken = null;
             if (StringUtils.isNotBlank(loginRequest.getEmail()) && StringUtils.isNotBlank(loginRequest.getPassword())) {
                 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-                String token = jwtService.generateToken(loginRequest.getEmail());
+                User user = userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
+                if (user != null) {
+                    token = jwtService.generateToken(user);
+                    refrshToken = jwtService.generateRefeshToken(user);
+                    jwtResponse.setToken(token);
+                    jwtResponse.setRefreshToken(refrshToken);
+                }
                 response.setStatus(ResponseStatus.SUCCESS.getCode());
                 response.setMessage(ResponseStatus.SUCCESS.getMessage());
-                response.setData(token);
+                response.setData(jwtResponse);
                 return response;
             }
         }catch (Exception e) {
@@ -38,7 +51,6 @@ public class AuthServiceImpl implements AuthService {
             response.setMessage(ResponseStatus.BAD_REQUEST.getMessage());
             return response;
         }
-
         return response;
     }
 }

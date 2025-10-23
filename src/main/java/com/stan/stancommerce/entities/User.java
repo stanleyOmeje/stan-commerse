@@ -1,5 +1,6 @@
 package com.stan.stancommerce.entities;
 
+import com.stan.stancommerce.enums.Roles;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,12 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Roles role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Orders> orders = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
     @Builder.Default

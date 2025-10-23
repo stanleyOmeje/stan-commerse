@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -34,4 +36,7 @@ public class Product {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     private Set<CartItems> cartItems;
+
+    @OneToMany(mappedBy = "product")
+    private List<OrderItems> orderItems = new ArrayList<>();
 }

@@ -1,7 +1,9 @@
 package com.stan.stancommerce.config.securityconfig;
 
 
+import com.stan.stancommerce.enums.Roles;
 import com.stan.stancommerce.service.security.UserDService;
+import com.stan.stancommerce.service.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,12 +21,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
     private final UserDetailsService userDetailService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,8 +46,10 @@ public class SecurityConfig {
                         a.requestMatchers("/carts/**").permitAll()
                             .requestMatchers(HttpMethod.POST,"users").permitAll()
                             .requestMatchers("users/login").permitAll()
+                            .requestMatchers("users/**").hasAuthority(Roles.USER.name())
                             .requestMatchers("auth/login").permitAll()
-                            .anyRequest().authenticated());
+                            .anyRequest().authenticated())
+                    .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
             } catch (Exception e) {
                 throw new RuntimeException(e);
