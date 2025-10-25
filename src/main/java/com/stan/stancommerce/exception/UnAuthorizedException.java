@@ -3,13 +3,13 @@ package com.stan.stancommerce.exception;
 
 import com.stan.stancommerce.enums.ResponseStatus;
 
-public class AlreadyExistException extends RuntimeException {
+public class UnAuthorizedException extends RuntimeException {
     private String code;
-    public AlreadyExistException(String message) {
+    public UnAuthorizedException(String message) {
         super(message);
         this.code= ResponseStatus.ALREADY_EXIST.getCode();
     }
-    public AlreadyExistException(String code, String message) {
+    public UnAuthorizedException(String code, String message) {
         super(message);
         this.code = code;
     }

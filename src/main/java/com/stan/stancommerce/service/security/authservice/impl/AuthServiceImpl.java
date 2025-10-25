@@ -5,6 +5,7 @@ import com.stan.stancommerce.dto.jwt.JwtResponse;
 import com.stan.stancommerce.dto.response.DefaultResponse;
 import com.stan.stancommerce.entities.User;
 import com.stan.stancommerce.enums.ResponseStatus;
+import com.stan.stancommerce.exception.NotFoundException;
 import com.stan.stancommerce.repositories.UserRepository;
 import com.stan.stancommerce.service.security.authservice.AuthService;
 import com.stan.stancommerce.service.security.authservice.JwtService;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -22,13 +25,14 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final UserRepository userRepository;
+
     @Override
     public DefaultResponse<?> loginUser(LoginRequest loginRequest) {
         JwtResponse jwtResponse = new JwtResponse();
         DefaultResponse<JwtResponse> response = new DefaultResponse<>();
         response.setStatus(ResponseStatus.FAILED.getCode());
         response.setMessage(ResponseStatus.FAILED.getMessage());
-        try{
+        try {
             String token = null;
             String refrshToken = null;
             if (StringUtils.isNotBlank(loginRequest.getEmail()) && StringUtils.isNotBlank(loginRequest.getPassword())) {
@@ -45,12 +49,26 @@ public class AuthServiceImpl implements AuthService {
                 response.setData(jwtResponse);
                 return response;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             response.setStatus(ResponseStatus.BAD_REQUEST.getCode());
             response.setMessage(ResponseStatus.BAD_REQUEST.getMessage());
             return response;
         }
         return response;
+    }
+
+    @Override
+    public User getLoggedInUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.getMessage());
+        }
+        String email = auth.getPrincipal().toString();
+        User user = userRepository.findByEmail(email).orElseThrow(NotFoundException::new);
+        if (user == null) {
+            throw new NotFoundException(ResponseStatus.NOT_FOUND.getMessage());
+        }
+        return user;
     }
 }

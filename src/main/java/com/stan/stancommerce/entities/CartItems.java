@@ -12,7 +12,7 @@ public class CartItems {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long quantity;
+    private Integer quantity;
 
     @ManyToOne
     @JoinColumn

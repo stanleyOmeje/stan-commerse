@@ -12,22 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
     private final OrderService orderService;
-
-    @PostMapping
-    public ResponseEntity<DefaultResponse<?>> checkout(CheckoutRequest checkoutRequest) {
-        log.info("Inside OrderController::checkout with Checkout request: {}", checkoutRequest);
-        DefaultResponse<?> response = null;
-        try {
-            response = orderService.checkout(checkoutRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        }catch (Exception e){
-            log.error(e.getMessage());
-        }
-        return ResponseEntity.ok(response);
-    }
 
     @GetMapping
     public ResponseEntity<DefaultResponse<?>> getOrders() {

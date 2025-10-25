@@ -89,12 +89,12 @@ public class ProductServiceImpl implements ProductService {
         log.info("Finding product with id " + id);
         ProductDto productDto = null;
         List<Product> product = null;
-        if(id != null) {
-           Optional<Category> category = categoryRepository.findById(id);
-           if(category.isPresent()) {
-               product = productRepository.findByCategory(category.get());
-           }
-        }else {
+        if (id != null) {
+            Optional<Category> category = categoryRepository.findById(id);
+            if (category.isPresent()) {
+                product = productRepository.findByCategory(category.get());
+            }
+        } else {
             product = productRepository.findAll();
         }
         return product.stream().map(productMapper::mapProductToProductDto).toList();
@@ -105,17 +105,17 @@ public class ProductServiceImpl implements ProductService {
         log.info("Finding product with id " + id);
         ProductDto productDto = null;
         Product product = null;
-      try {
-            Optional<Product> optionalProduct= productRepository.findById(id);
-            if(optionalProduct.isPresent()) {
+        try {
+            Optional<Product> optionalProduct = productRepository.findById(id);
+            if (optionalProduct.isPresent()) {
                 product = optionalProduct.get();
                 productDto = productMapper.mapProductToProductDto(product);
                 log.info("productDto...{}", productDto);
                 return productDto;
             }
-        }catch (Exception e){
-          log.error(e.getMessage());
-      }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
         return productDto;
     }
 }

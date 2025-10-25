@@ -34,7 +34,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "customer")
     private List<Orders> orders = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)

@@ -2,11 +2,14 @@ package com.stan.stancommerce.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
 public class OrderItems {
     @Id
@@ -15,7 +18,7 @@ public class OrderItems {
     private LocalDateTime createdAt;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
-    private Long quantity;
+    private Integer quantity;
 
     @ManyToOne
     @JoinColumn

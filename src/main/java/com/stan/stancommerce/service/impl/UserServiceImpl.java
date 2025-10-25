@@ -32,14 +32,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> findAll(String name) {
         Pageable pageable = PageRequest.of(0, 10);
-       List<User> users = userRepository.findAll(Sort.by(name));
+        List<User> users = userRepository.findAll(Sort.by(name));
         return users.stream().map(userMapper::UsertoUserDto).toList();
     }
 
     @Override
     public UserDto findById(long id) {
         User user = userRepository.findById(id).orElse(null);
-        if(user != null){
+        if (user != null) {
             return userMapper.UsertoUserDto(user);
         }
         return null;
@@ -49,8 +49,8 @@ public class UserServiceImpl implements UserService {
     public UserDto updateUser(UpdateUserRequest request, long id) {
         log.info("Inside updateUser with id: " + id);
         Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty()){
-          throw new IllegalArgumentException("User not found");
+        if (optionalUser.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
         }
         User user = optionalUser.get();
         user.setName(request.getName());
@@ -63,11 +63,11 @@ public class UserServiceImpl implements UserService {
     public UserDto changePassword(ChangePasswordRequest request, long id) {
         log.info("Inside changePassword with id: " + id);
         Optional<User> optionalUser = userRepository.findById(id);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
         User user = optionalUser.get();
-        if(!request.getOldPassword().equals(user.getPassword())){
+        if (!request.getOldPassword().equals(user.getPassword())) {
             throw new IllegalArgumentException("Old password does not match");
         }
         user.setPassword(request.getNewPassword());
@@ -79,22 +79,22 @@ public class UserServiceImpl implements UserService {
     public UserDto registerUser(RegisterUserRequest request) {
         UserDto userDto = null;
         log.info("Inside registerUser with request: " + request);
-        String email = request.getEmail().replaceAll("\\s","");
+        String email = request.getEmail().replaceAll("\\s", "");
         email = email.toLowerCase();
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isPresent()){
-          throw new IllegalArgumentException("User already in use");
+        if (optionalUser.isPresent()) {
+            throw new IllegalArgumentException("User already in use");
         }
         User user = userMapper.mapRegisterUserRequestToUser(request);
         user.setRole(Roles.USER);
-        try{
+        try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-             user = userRepository.save(user);
-             userDto = userMapper.UsertoUserDto(user);
-             userDto.setId(user.getId());
-             return userDto;
+            user = userRepository.save(user);
+            userDto = userMapper.UsertoUserDto(user);
+            userDto.setId(user.getId());
+            return userDto;
 
-        }catch(Exception e){
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
         return userDto;
@@ -106,11 +106,11 @@ public class UserServiceImpl implements UserService {
         response.setStatus(ResponseStatus.FAILED.getCode());
         response.setMessage("registered unsuccessful");
         Optional<User> user = userRepository.findByEmail(loginRequest.getEmail());
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             throw new NotFoundException("User not found");
         }
         boolean matches = passwordEncoder.matches(loginRequest.getPassword(), user.get().getPassword());
-        if(matches){
+        if (matches) {
             response.setStatus(ResponseStatus.SUCCESS.getCode());
             response.setMessage("User registered successfully");
         }
@@ -118,12 +118,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public DefaultResponse<?>  getLoginUser(String token) {
+    public DefaultResponse<?> getLoginUser(String token) {
         DefaultResponse<UserDto> response = new DefaultResponse<>();
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String)authentication.getPrincipal();
+        String email = (String) authentication.getPrincipal();
         Optional<User> optionalUser = userRepository.findByEmail(email);
-        if(optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             throw new NotFoundException("User not found");
         }
         User user = optionalUser.get();

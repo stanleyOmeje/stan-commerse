@@ -37,4 +37,11 @@ public class GlobalExceptionResolver extends ResponseEntityExceptionHandler  {
     public ResponseEntity<Object> handleSystemError(SystemError ex, WebRequest request) {
         return new ResponseEntity<>(new DefaultResponse(ex.getCode(), ex.getMessage()),new HttpHeaders(), HttpStatus.OK);
     }
+
+
+    @ResponseStatus(HttpStatus.OK)
+    @ExceptionHandler
+    public ResponseEntity<Object> handleUnAuthorizedException(UnAuthorizedException ex, WebRequest request) {
+        return new ResponseEntity<>(new DefaultResponse(ex.getCode(), ex.getMessage()),new HttpHeaders(), HttpStatus.OK);
+    }
 }

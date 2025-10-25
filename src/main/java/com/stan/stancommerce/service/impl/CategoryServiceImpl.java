@@ -21,6 +21,7 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+
     @Override
     public DefaultResponse<CategoryDto> createCategory(CreateCategoryRequest request) {
         DefaultResponse<CategoryDto> response = new DefaultResponse<>();
@@ -29,16 +30,16 @@ public class CategoryServiceImpl implements CategoryService {
             throw new BadRequestException("Name cannot be empty");
         }
         Category category = categoryMapper.mapCreateCategoryRequestToCategory(request);
-        try{
+        try {
             Optional<Category> categoryCheck = categoryRepository.findByName(request.getName());
             if (categoryCheck.isPresent()) {
                 throw new IllegalArgumentException("Category with name " + request.getName() + " already exists");
             }
             category = categoryRepository.save(category);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-         CategoryDto categoryDto = categoryMapper.mapCategoryToCategoryDto(category);
+        CategoryDto categoryDto = categoryMapper.mapCategoryToCategoryDto(category);
         response.setStatus(ResponseStatus.SUCCESS.getCode());
         response.setMessage(ResponseStatus.SUCCESS.getMessage());
         response.setData(categoryDto);

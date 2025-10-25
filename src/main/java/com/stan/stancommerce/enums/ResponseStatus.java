@@ -1,15 +1,14 @@
 package com.stan.stancommerce.enums;
 
-import lombok.Data;
-
 public enum ResponseStatus {
     SUCCESS("00", "Successful"),
     FAILED("01", "Failed"),
     NOT_FOUND("100", "Not Found"),
-    ALREADY_EXIXT("200", "Already Exixt"),
+    ALREADY_EXIST("200", "Already Exixt"),
     CREATED("300", "Created"),
-    BAD_REQUEST("400", "Bad Request"),
-    SYSTEM_ERROR("500", "System Error"),;
+    UNAUTHORIZED("400", "User Not Authorized "),
+    SYSTEM_ERROR("500", "System Error"),
+    BAD_REQUEST("600", "Bad Request");
 
     private String code;
     private String message;

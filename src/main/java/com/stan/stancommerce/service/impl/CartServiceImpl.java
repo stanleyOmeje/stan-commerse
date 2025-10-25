@@ -90,34 +90,33 @@ public class CartServiceImpl implements CartService {
 
         CartDto cartDto = null;
         Cart cart = null;
-            try {
-                cart = cartRepository.findById(cartId).orElseThrow(() -> new NotFoundException("Cart not found"));
-                if (cart == null) {
-                    response.setStatus(ResponseStatus.NOT_FOUND.getCode());
-                    response.setMessage(ResponseStatus.NOT_FOUND.getMessage());
-                    return response;
-                }
-            }catch (NotFoundException e){
+        try {
+            cart = cartRepository.findById(cartId).orElseThrow(() -> new NotFoundException("Cart not found"));
+            if (cart == null) {
                 response.setStatus(ResponseStatus.NOT_FOUND.getCode());
                 response.setMessage(ResponseStatus.NOT_FOUND.getMessage());
                 return response;
             }
-            catch (Exception e) {
-                response.setStatus(e.getMessage());
-                log.error(e.getMessage());
-            }
-            if(cart==null){
-                throw new NotFoundException();
-            }
-            Set<CartItems> cartItems = cart.getCartItems();
-            if(cartItems != null && !cartItems.isEmpty()) {
-                cartDto = cartMapper.mapCartItemtoCartDto(cart.getCartItems(),cart);
-                response.setStatus(ResponseStatus.SUCCESS.getCode());
-                response.setMessage(ResponseStatus.SUCCESS.getMessage());
-                response.setData(cartDto);
-                return response;
-            }
+        } catch (NotFoundException e) {
+            response.setStatus(ResponseStatus.NOT_FOUND.getCode());
+            response.setMessage(ResponseStatus.NOT_FOUND.getMessage());
             return response;
+        } catch (Exception e) {
+            response.setStatus(e.getMessage());
+            log.error(e.getMessage());
+        }
+        if (cart == null) {
+            throw new NotFoundException();
+        }
+        Set<CartItems> cartItems = cart.getCartItems();
+        if (cartItems != null && !cartItems.isEmpty()) {
+            cartDto = cartMapper.mapCartItemtoCartDto(cart.getCartItems(), cart);
+            response.setStatus(ResponseStatus.SUCCESS.getCode());
+            response.setMessage(ResponseStatus.SUCCESS.getMessage());
+            response.setData(cartDto);
+            return response;
+        }
+        return response;
     }
 
     @Override
@@ -139,7 +138,7 @@ public class CartServiceImpl implements CartService {
                 response.setData(cartItemDto);
                 return response;
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
         return response;
@@ -153,10 +152,10 @@ public class CartServiceImpl implements CartService {
             if (cart == null) {
                 throw new IllegalArgumentException("Cart is empty");
             }
-                cart.removeCartItem(productId);
-                cartRepository.save(cart);
+            cart.removeCartItem(productId);
+            cartRepository.save(cart);
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }
@@ -168,6 +167,7 @@ public class CartServiceImpl implements CartService {
             throw new IllegalArgumentException("Cart is empty");
         }
         cart.clearCart();
+        cartRepository.save(cart);
     }
 
 }

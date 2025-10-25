@@ -20,8 +20,9 @@ import java.util.Map;
 public class JwtServiceImpl implements JwtService {
     @Value("${spring.jwt.key}")
     String key;
-    long expirationTime =86400000;
-    long refreshTokenExpirationTime =86400000;
+    long expirationTime = 86400000;
+    long refreshTokenExpirationTime = 86400000;
+
     public String generateToken(User user) {
         log.info("Generating JWT token for id: ...{} and key ...{}", user.getId(), this.key);
         Map<String, Object> claims = new HashMap<>();
@@ -57,13 +58,13 @@ public class JwtServiceImpl implements JwtService {
         return Keys.hmacShaKeyFor(bytes);
     }
 
-    public boolean validatoken(String token){
-          try{
-             Claims claims = getClaims(token);
-             return claims.getExpiration().after(new Date());
-          }catch (JwtException e){
-              return false;
-          }
+    public boolean validatoken(String token) {
+        try {
+            Claims claims = getClaims(token);
+            return claims.getExpiration().after(new Date());
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
     @Override
@@ -71,7 +72,7 @@ public class JwtServiceImpl implements JwtService {
         return getClaims(token).getSubject();
     }
 
-    public Claims getClaims(String token){
+    public Claims getClaims(String token) {
         return Jwts.parser()
             .verifyWith(getKey(key))
             .build()
