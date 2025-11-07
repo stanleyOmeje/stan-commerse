@@ -3,6 +3,7 @@ package com.stan.stancommerce.entities;
 import com.stan.stancommerce.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +31,10 @@ public class Orders {
     @JoinColumn(name = "customer_id")
     private User customer;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "orders", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<OrderItems> items = new HashSet<>();
+
+    public Boolean isPlacedBy(User customer) {
+        return this.customer.equals(customer);
+    }
 }

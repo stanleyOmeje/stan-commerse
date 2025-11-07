@@ -85,8 +85,8 @@ public class CartServiceImpl implements CartService {
     @Override
     public DefaultResponse<?> getCart(Long cartId) {
         DefaultResponse<CartDto> response = new DefaultResponse<>();
-        response.setStatus(ResponseStatus.FAILED.getCode());
-        response.setMessage(ResponseStatus.FAILED.getMessage());
+        response.setStatus(ResponseStatus.SUCCESS.getCode());
+        response.setMessage(ResponseStatus.SUCCESS.getMessage());
 
         CartDto cartDto = null;
         Cart cart = null;
@@ -116,6 +116,9 @@ public class CartServiceImpl implements CartService {
             response.setData(cartDto);
             return response;
         }
+        cartDto = new CartDto();
+        cartDto.setId(cartId);
+        response.setData(cartDto);
         return response;
     }
 

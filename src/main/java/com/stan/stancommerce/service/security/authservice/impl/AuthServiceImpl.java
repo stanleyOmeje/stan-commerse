@@ -10,6 +10,8 @@ import com.stan.stancommerce.repositories.UserRepository;
 import com.stan.stancommerce.service.security.authservice.AuthService;
 import com.stan.stancommerce.service.security.authservice.JwtService;
 import io.micrometer.common.util.StringUtils;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
 
     @Override
-    public DefaultResponse<?> loginUser(LoginRequest loginRequest) {
+    public DefaultResponse<?> loginUser(LoginRequest loginRequest, HttpServletResponse servletResponse) {
         JwtResponse jwtResponse = new JwtResponse();
         DefaultResponse<JwtResponse> response = new DefaultResponse<>();
         response.setStatus(ResponseStatus.FAILED.getCode());
@@ -41,6 +43,14 @@ public class AuthServiceImpl implements AuthService {
                 if (user != null) {
                     token = jwtService.generateToken(user);
                     refrshToken = jwtService.generateRefeshToken(user);
+
+                    var cookie = new Cookie("refreshToken", refrshToken);
+                    cookie.setPath("/auth/refresh-token");
+                    cookie.setHttpOnly(true);
+                    cookie.setMaxAge(604800);
+                    cookie.setSecure(true);
+
+                    servletResponse.addCookie(cookie);
                     jwtResponse.setToken(token);
                     jwtResponse.setRefreshToken(refrshToken);
                 }
@@ -59,6 +69,30 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public DefaultResponse<?> refreshToken(String refeshToken) {
+        log.info("Inside refreshToken method with refeshToken: {}", refeshToken);
+        JwtResponse jwtResponse = new JwtResponse();
+        DefaultResponse<JwtResponse> response = new DefaultResponse<>();
+        if (!jwtService.validatoken(refeshToken)){
+            response.setStatus(ResponseStatus.UNAUTHORIZED.getCode());
+            response.setMessage(ResponseStatus.UNAUTHORIZED.getMessage());
+            return response;
+        }
+        String id = jwtService.getSubject(refeshToken);
+        String token = null;
+        User user = userRepository.findById(Long.parseLong(id)).orElse(null);
+        if (user != null) {
+           token = jwtService.generateToken(user);
+           jwtResponse.setToken(token);
+        }
+        response.setStatus(ResponseStatus.SUCCESS.getCode());
+        response.setMessage(ResponseStatus.SUCCESS.getMessage());
+        response.setData(jwtResponse);
+        log.info("response: {}", response);
+        return response;
+    }
+
+    @Override
     public User getLoggedInUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
@@ -71,4 +105,6 @@ public class AuthServiceImpl implements AuthService {
         }
         return user;
     }
+
+
 }

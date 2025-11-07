@@ -21,7 +21,7 @@ public class JwtServiceImpl implements JwtService {
     @Value("${spring.jwt.key}")
     String key;
     long expirationTime = 86400000;
-    long refreshTokenExpirationTime = 86400000;
+    long refreshTokenExpirationTime = 604800000;
 
     public String generateToken(User user) {
         log.info("Generating JWT token for id: ...{} and key ...{}", user.getId(), this.key);

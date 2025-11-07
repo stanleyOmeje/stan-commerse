@@ -6,6 +6,7 @@ import com.stan.stancommerce.service.UserService;
 import com.stan.stancommerce.service.security.authservice.AuthService;
 import com.stan.stancommerce.service.security.authservice.JwtService;
 import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +22,16 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<DefaultResponse> loginUser(@RequestBody LoginRequest loginRequest){
+    public ResponseEntity<DefaultResponse> loginUser(@RequestBody LoginRequest loginRequest,  HttpServletResponse servletResponse){
         DefaultResponse<?> response = new DefaultResponse<>();
-        response = authService.loginUser(loginRequest);
+        response = authService.loginUser(loginRequest,servletResponse);
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<DefaultResponse> refreshToken(@CookieValue(value = "refreshToken") String refeshToken){
+        DefaultResponse<?> response = new DefaultResponse<>();
+        response = authService.refreshToken(refeshToken);
         return ResponseEntity.ok().body(response);
     }
 

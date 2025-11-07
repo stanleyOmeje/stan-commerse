@@ -8,7 +8,8 @@ public enum ResponseStatus {
     CREATED("300", "Created"),
     UNAUTHORIZED("400", "User Not Authorized "),
     SYSTEM_ERROR("500", "System Error"),
-    BAD_REQUEST("600", "Bad Request");
+    BAD_REQUEST("600", "Bad Request"),
+    PAYMENT_FAILED("700", "Payment Failed");
 
     private String code;
     private String message;

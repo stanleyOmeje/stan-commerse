@@ -30,6 +30,10 @@ public class SecurityConfig {
     private final UserDetailsService userDetailService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    //stripe secretKey
+
+    //sk_test_51SPKHsRNfhAKWHzBEkxxNi1vt6JGTmc7rVbrvXlFoa7gBTnYMGyKe8LBRupnWZ1kOHY8tbb1EuBCDAl6H8WEGq2v00o8Peas00
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -48,6 +52,7 @@ public class SecurityConfig {
                             .requestMatchers("users/login").permitAll()
                             .requestMatchers("users/**").hasAuthority(Roles.USER.name())
                             .requestMatchers("auth/login").permitAll()
+                            .requestMatchers("auth/refresh").permitAll()
                             .anyRequest().authenticated())
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
