@@ -52,7 +52,8 @@ public class SecurityConfig {
                             .requestMatchers("users/login").permitAll()
                             .requestMatchers("users/**").hasAuthority(Roles.USER.name())
                             .requestMatchers("auth/login").permitAll()
-                            .requestMatchers("auth/refresh").permitAll()
+                            .requestMatchers("auth/login").permitAll()
+                            .requestMatchers("checkout/webhook").permitAll()
                             .anyRequest().authenticated())
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

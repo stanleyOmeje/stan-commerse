@@ -73,17 +73,17 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>com.stripe</groupId>
-            <artifactId>stripe-java</artifactId>
-            <version>27.1.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.stripe</groupId>-->
+<!--            <artifactId>stripe-java</artifactId>-->
+<!--            <version>27.1.0</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>me.paulschwarz</groupId>
             <artifactId>spring-dotenv</artifactId>
             <version>4.0.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf -->
+<!--         https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-thymeleaf-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -97,6 +97,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>30.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>

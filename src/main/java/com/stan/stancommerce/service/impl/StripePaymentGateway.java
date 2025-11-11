@@ -20,7 +20,12 @@ public class StripePaymentGateway implements PaymentGateway {
             var builder = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setSuccessUrl("http://localhost:8080/success/" + order.getId())
-                .setCancelUrl("http://localhost:8080/cancel/" + order.getId());
+                .setCancelUrl("http://localhost:8080/cancel/" + order.getId())
+                .setPaymentIntentData(
+                    SessionCreateParams.PaymentIntentData.builder()
+                        .putMetadata("order_id",String.valueOf(order.getId()))
+                        .build()
+                );
 
             order.getItems().forEach(orderItems -> {
                 var lineItem = SessionCreateParams.LineItem.builder()
@@ -31,7 +36,7 @@ public class StripePaymentGateway implements PaymentGateway {
                             .setUnitAmountDecimal(orderItems.getUnitPrice().multiply(BigDecimal.valueOf(100)))
                             .setProductData(
                                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                    //.setName(orderItems.getProduct().getName())
+                                    .setName(orderItems.getProduct().getName())
                                     .setDescription(orderItems.getProduct().getDescription()).build()
                             ).build()
                     ).build();

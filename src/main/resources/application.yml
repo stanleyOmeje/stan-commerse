@@ -28,5 +28,6 @@ spring:
 
 stripe:
   secretKey: ${API_SECRET_KEY}
+  webhookKey: ${WEBHOOK_SECRET_KEY}
   baseUrl:
 
