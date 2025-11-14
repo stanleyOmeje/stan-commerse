@@ -1,0 +1,17 @@
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURSE_URL}
+    username: root
+    password: Wall3t53v1ce
+
+  jpa:
+    properties:
+      hibernate.cache.use_second_level_cache: false
+      hibernate.cache.use_query_cache: false
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+

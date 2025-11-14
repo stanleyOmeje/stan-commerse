@@ -7,24 +7,11 @@ spring:
   application:
     name: springboot-course
 
-  datasource:
-    url: jdbc:mysql://localhost:3306/commerse
-    username: root
-    password: Wall3t53v1ce
-
-  jpa:
-    properties:
-      hibernate.cache.use_second_level_cache: false
-      hibernate.cache.use_query_cache: false
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-
   jwt:
     key: ${JWT_SECRET}
+
+  profiles:
+    active: dev
 
 stripe:
   secretKey: ${API_SECRET_KEY}
