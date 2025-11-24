@@ -40,10 +40,9 @@ public class StripePaymentGateway implements PaymentGateway {
                 .setCancelUrl("http://localhost:9005/cancel/" + order.getId())
                 .setPaymentIntentData(
                     SessionCreateParams.PaymentIntentData.builder()
-                        .putMetadata("order_id",String.valueOf(order.getId()))
+                        .putMetadata("order_id", String.valueOf(order.getId()))
                         .build()
                 );
-
             order.getItems().forEach(orderItems -> {
                 var lineItem = SessionCreateParams.LineItem.builder()
                     .setQuantity(Long.valueOf(orderItems.getQuantity()))
@@ -63,10 +62,9 @@ public class StripePaymentGateway implements PaymentGateway {
             var session = Session.create(builder.build());
             return session.getUrl();
         } catch (StripeException e) {
-            throw new PaymentException(ResponseStatus.PAYMENT_FAILED.getCode(),ResponseStatus.PAYMENT_FAILED.getMessage());
-        }
-        catch (Exception e) {
-         log.error(e.getMessage());
+            throw new PaymentException(ResponseStatus.PAYMENT_FAILED.getCode(), ResponseStatus.PAYMENT_FAILED.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
         }
         return null;
     }

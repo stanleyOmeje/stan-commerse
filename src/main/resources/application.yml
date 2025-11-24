@@ -11,7 +11,7 @@ spring:
     key: ${JWT_SECRET}
 
   profiles:
-    active: dev
+    active: prod
 
 stripe:
   secretKey: ${API_SECRET_KEY}
